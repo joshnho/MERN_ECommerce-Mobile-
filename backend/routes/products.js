@@ -107,4 +107,56 @@ router.delete('/:id', async (req, res) => {
     }
 })
 
+// Get featured products
+router.get('/get/featured/', async (req, res) => {
+    try {
+        const products = await Product.find({ isFeatured: true })
+        if (!products) return res.status(500).json({ success: false })
+        res.send(products)
+    } catch (err) {
+        console.log(err.message)
+        res.status(500).send('Server Error')
+    }
+})
+
+router.get('/get/featured/:count', async (req, res) => {
+    try {
+        const count = req.params.count ? req.params.count : 0
+        const products = await Product.find({ isFeatured: true }).limit(+count)
+        if (!products) return res.status(500).json({ success: false })
+        res.send(products)
+    } catch (err) {
+        console.log(err.message)
+        res.status(500).send('Server Error')
+    }
+})
+
+// router.get('/get/featured/:count', async (req, res) => {
+//     try {
+//         const count = req.params.count ? req.params.count : 0
+//         const products = await Product.find({ isFeatured: true }).limit(+count)
+//         if (!productCount) return res.status(500).json({ success: false })
+//         res.send(products)
+//     } catch (err) {
+//         console.log(err.message)
+//         res.status(500).send('Server Error')
+//     }
+// })
+
+// ----For admin use----
+
+// Get number of products listed
+router.get('/get/count', async (req, res) => {
+    try {
+        const productCount = await Product.countDocuments((count) => count)
+        if (!productCount) return res.status(500).json({ success: false })
+        res.send({
+            productCount: productCount
+        })
+    } catch (err) {
+        console.log(err.message)
+        res.status(500).send('Server Error')
+    }
+})
+
 module.exports = router
