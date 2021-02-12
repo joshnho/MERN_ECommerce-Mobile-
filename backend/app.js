@@ -3,6 +3,7 @@ const app = express()
 
 require('dotenv/config')
 const api = process.env.API_URL
+const productsRouter = require('./routes/products')
 
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
@@ -12,39 +13,7 @@ const mongoose = require('mongoose')
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
 
-const productSchema = mongoose.Schema({
-    name: String,
-    image: String,
-    countInStock: Number
-})
-const Product = mongoose.model('Product', productSchema)
-
-app.get(`${api}/products`, async (req, res) => {
-    const productList = await Product.find()
-
-    if (!productList){
-        res.status(500).json({success: false})
-    } else {
-        res.send(productList)
-    }
-})
-
-app.post(`${api}/products`, (req, res) => {
-    const product = new Product({
-        name: req.body.name,
-        image: req.body.image,
-        countInStock: req.body.countInStock
-    })
-    
-    product.save().then((newProduct => {
-        res.status(201).json(newProduct)
-    })).catch((err) => {
-        res.status(500).json({
-            error: err,
-            success: false
-        })
-    })
-})
+app.use(`${api}/products`, productsRouter)
 
 mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
