@@ -3,28 +3,27 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-    const productList = await Product.find()
-
-    if (!productList){
-        res.status(500).json({ success: false })
-    } else {
-        res.send(productList)
+    try {
+        const productList = await Product.find()
+        res.send(productList)   
+    } catch (err) {
+        res.status(500).json({ error: err, success: false })
     }
 })
 
 router.post('/', async (req, res) => {
-    const product = await new Product({
-        name: req.body.name,
-        image: req.body.image,
-        countInStock: req.body.countInStock
-    })
-    
-    product.save()
+    try {
+        const product = await new Product({
+            name: req.body.name,
+            image: req.body.image,
+            countInStock: req.body.countInStock
+        })
 
-    if (!product){
-        res.status(500).json({ success: false })
-    } else {
+        product.save()
+
         res.status(201).json(product)
+    } catch (err) {
+        res.status(500).json({ error: err, success: false })
     }
 })
 
