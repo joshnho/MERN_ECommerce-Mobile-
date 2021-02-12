@@ -52,7 +52,9 @@ router.put('/:id', async (req, res) => {
             icon: req.body.icon,
             color: req.body.color
         }, { new: true })
+
         if (!category) return res.status(404).json({ msg: 'Category not found' })
+        
         await category.save()
         res.send(category)
     } catch (err) {
