@@ -3,10 +3,13 @@ const express = require('express')
 const { Category } = require('../models/Category')
 const router = express.Router()
 
-// Get list of all products
+
+// Get list of all products (can pass query params to filter search by category ID)
 router.get('/', async (req, res) => {
     try {
-        const productList = await Product.find().populate('category')
+        const categories = req.query.categories ? { category: req.query.categories.split(',') } : {}
+
+        const productList = await Product.find(categories).populate('category')
 
         if (!productList) return res.status(500).json({ success: false })
 
@@ -108,9 +111,20 @@ router.delete('/:id', async (req, res) => {
 })
 
 // Get featured products
-router.get('/get/featured/', async (req, res) => {
+// router.get('/get/featured', async (req, res) => {
+//     try {
+//         const products = await Product.find({ isFeatured: true })
+//         if (!products) return res.status(500).json({ success: false })
+//         res.send(products)
+//     } catch (err) {
+//         console.log(err.message)
+//         res.status(500).send('Server Error')
+//     }
+// })
+
+router.get('/get/featured/:count', async (req, res) => {
     try {
-        const products = await Product.find({ isFeatured: true })
+        const products = await Product.find({ isFeatured: true }).limit(+req.params.count)
         if (!products) return res.status(500).json({ success: false })
         res.send(products)
     } catch (err) {
@@ -119,17 +133,8 @@ router.get('/get/featured/', async (req, res) => {
     }
 })
 
-router.get('/get/featured/:count', async (req, res) => {
-    try {
-        const count = req.params.count ? req.params.count : 0
-        const products = await Product.find({ isFeatured: true }).limit(+count)
-        if (!products) return res.status(500).json({ success: false })
-        res.send(products)
-    } catch (err) {
-        console.log(err.message)
-        res.status(500).send('Server Error')
-    }
-})
+
+
 
 // ----For admin use----
 
