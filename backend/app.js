@@ -18,11 +18,13 @@ app.use(morgan('tiny'))
 // Routes
 const productsRouter = require('./routes/products')
 const categoryRouter = require('./routes/categories')
+const usersRouter = require('./routes/users')
 
 const api = process.env.API_URL
 
 app.use(`${api}/products`, productsRouter)
 app.use(`${api}/categories`, categoryRouter)
+app.use(`${api}/users`, usersRouter)
 
 
 // Connect to MongoDB

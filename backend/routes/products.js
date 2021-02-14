@@ -3,7 +3,6 @@ const express = require('express')
 const { Category } = require('../models/Category')
 const router = express.Router()
 
-
 // Get list of all products (can pass query params to filter search by category ID)
 router.get('/', async (req, res) => {
     try {
